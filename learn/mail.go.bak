@@ -1,0 +1,51 @@
+/**
+ * 邮件发送脚本
+ * 20170523
+ */
+package main
+
+import(
+"fmt"
+"net/smtp"
+"encoding/base64"
+"time"
+"strings"
+)
+//html,plain
+func SendMail( title,user,pswd,smtpserver,port,from,to,subject,body,format string ) error {
+	bs64 := base64.NewEncoding("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/")
+	header := make(map[string]string)
+	header["From"] = title + "<"+from+">"
+	header["To"] = to
+	header["Subject"] = fmt.Sprintf("=?UTF-8?B?%s?=", bs64.EncodeToString([]byte(subject)))
+	header["MIME-Version"] = "1.0"
+	header["Content-Type"] = "text/"+format+"; charset=UTF-8"
+	header["Content-Transfer-Encoding"] = "base64"
+	header["Date"] = time.Now().String()
+	data := ""
+	for k, v := range header {
+		data += k+": "+v+"\r\n"
+	}
+	data += "\r\n" + bs64.EncodeToString([]byte(body))
+	send_to := strings.Split(to, ";")
+	err := smtp.SendMail( smtpserver+":"+port,smtp.PlainAuth("",user,pswd,smtpserver),from,send_to,[]byte(data) )
+	return err
+}
+
+func main(){
+	title := "hello world" + time.Now().String()
+	from := "jiqing.sun@cheng95.com"
+	to := "dongqing.shi@cheng95.com;dongqing.shi@ifchange.com"
+	subject := "HELLO WORLD"
+	body := "<h1>helloworld</h1>"
+	smtpserver := "service.cheng95.com"
+	pswd := "ifchange888"
+	fmt.Println("start send email")
+	err := SendMail( title,from,pswd,smtpserver,"25",from,to,subject,body,"html" )
+	if err != nil {
+		fmt.Println("Send mail error!")
+		fmt.Println(err)
+	} else {
+		fmt.Println("Send mail success!")
+	}
+}

@@ -1,0 +1,66 @@
+
+
+
+bi api
+work_name:    bi_bidata    bi_bizhichang    bi_tocbi   bi_tobbi    bi_pulseprobe
+
+dev 192.168.1.66
+请求方式   http://192.168.1.66:51081/work_name
+[root@localhost go]# ps -ef | grep bigo                                 //查看服务是否允许
+root     13839  7092  0 17:48 pts/2    00:00:00 /opt/app/go/dev/go/bigo20180813
+root     13849  7092  0 17:49 pts/2    00:00:00 grep --color=auto bigo
+[root@localhost go]# kill -9 13839                                     //停止服务
+[root@localhost go]# nohup /opt/app/go/dev/go/bigo20180813 &           //启动服务
+[2] 13850
+[1]   Killed                  nohup /opt/app/go/dev/go/bigo20180813
+[root@localhost go]# nohup: ignoring input and appending output to ‘nohup.out’
+
+[root@localhost go]# ps -ef | grep bigo
+root     13850  7092  0 17:50 pts/2    00:00:00 /opt/app/go/dev/go/bigo20180813
+root     13858  7092  0 17:50 pts/2    00:00:00 grep --color=auto bigo
+[root@localhost go]#
+
+
+请求方式   http://dev.bi.rpc/work_name    1.66nginx代理51081端口的服务
+
+
+test  10.9.10.4
+请求方式   http://10.9.10.4:51081/work_name
+[bi_group@testing-jcsj4 bi]$ ps -ef | grep bigo
+bi_group 17576     1  0 Jul25 ?        00:10:38 /opt/userhome/bi_group/bi/bigo20180725
+bi_group 22288 19638  0 17:55 pts/2    00:00:00 grep bigo
+[bi_group@testing-jcsj4 bi]$ kill -9 17576
+[bi_group@testing-jcsj4 bi]$ nohup /opt/userhome/bi_group/bi/bigo20180813 &
+[1] 24279
+[bi_group@testing-jcsj4 bi]$ nohup: 忽略输入并把输出追加到"nohup.out"
+
+[bi_group@testing-jcsj4 bi]$ ps -ef | grep bigo
+bi_group 24279 19638  0 17:55 pts/2    00:00:00 /opt/userhome/bi_group/bi/bigo20180813
+bi_group 24559 19638  0 17:56 pts/2    00:00:00 grep bigo
+
+请求方式  http://testing2.bi.rpc/work_name  宝坤维护的nginx代理10.9.10.4的51081端口服务
+
+
+
+pro    192.168.8.38   192.168.8.39   192.168.8.70
+svn-php  tag：svn://192.168.1.203/rd/bi/tag/20180607
+
+
+接口访问不通
+开发和测试解决方案：查看服务是否停止，查看日志/opt/log/bigo.Y-m-d grep ERR 如果服务还运行，必然是数据库访问不通   如果服务停止了，启动就好
+线上解决方案：查看日志/opt/log/bi_php.Ymd 查看访问具体情况  grep logid 进程不会中断，顶多就是网络访问不通，nginx重新reload下即可
+
+
+
+异步人脉脚本
+dev  192.168.1.108
+test 10.9.10.4
+pro 192.168.8.38
+
+
+查看是否允许  ps -ef | grep bi_pulseprobe_server
+重启：
+pro  php /opt/userhome/bi_group/shell/bi_relation.php
+test /opt/app/php7/bin/php /opt/userhome/bi_group/bi_relation.php
+
+
